@@ -28,7 +28,7 @@ export class LoginRegistrationService {
     } else {
       return this.http
         .post<any>(this.localhost + this.endpoints.loginUser, loginDataObj)
-        .pipe(map(this.processData, this));
+        .pipe(map(response => response));
     }
   }
   load(): any {

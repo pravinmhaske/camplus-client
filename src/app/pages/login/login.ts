@@ -4,8 +4,10 @@ import { Router } from '@angular/router';
 
 import { UserData } from '../../providers/user-data';
 import { LoginRegistrationService } from '../../providers/login.registration.service';
+import { UtilityService } from '../../providers/utility.service';
 
 import { UserOptions } from '../../interfaces/user-options';
+import { LoadingController } from '@ionic/angular';
 
 
 
@@ -21,21 +23,26 @@ export class LoginPage {
 
   constructor(
     public userData: LoginRegistrationService,
-    public router: Router
+    public router: Router,
+    public util: UtilityService,
+    public loadingController: LoadingController,
   ) { }
 
-  onLogin(form: NgForm) {
+  async onLogin(form: NgForm) {
     this.submitted = true;
-
     if (form.valid) {
-      this.userData.loginUser(this.login) .subscribe(
-        data => {
+      this.util.showLoader("Logging  in...").then(() => {
+        this.userData.loginUser(this.login).subscribe(
+          data => {
             console.log("POST Request is successful ", data);
-        },
-        error => {
+            this.util.hideLoader();
+          },
+          error => {
             console.log("Error", error);
-        }
-    );   
+            this.util.hideLoader();
+          }
+        );
+      });
       // this.router.navigateByUrl('/app/tabs/(schedule:schedule)');
     }
   }
