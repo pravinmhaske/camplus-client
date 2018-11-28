@@ -3,6 +3,7 @@ import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { UserData } from '../../providers/user-data';
+import { LoginRegistrationService } from '../../providers/login.registration.service';
 
 import { UserOptions } from '../../interfaces/user-options';
 
@@ -19,7 +20,7 @@ export class LoginPage {
   submitted = false;
 
   constructor(
-    public userData: UserData,
+    public userData: LoginRegistrationService,
     public router: Router
   ) { }
 
@@ -27,8 +28,15 @@ export class LoginPage {
     this.submitted = true;
 
     if (form.valid) {
-      this.userData.login(this.login.username);
-      this.router.navigateByUrl('/app/tabs/(schedule:schedule)');
+      this.userData.loginUser(this.login) .subscribe(
+        data => {
+            console.log("POST Request is successful ", data);
+        },
+        error => {
+            console.log("Error", error);
+        }
+    );   
+      // this.router.navigateByUrl('/app/tabs/(schedule:schedule)');
     }
   }
 

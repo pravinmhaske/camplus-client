@@ -6,7 +6,7 @@ import { Storage } from '@ionic/storage';
 @Injectable({
   providedIn: 'root'
 })
-export class UserData {
+export class UtilityService {
   _favorites: string[] = [];
   HAS_LOGGED_IN = 'hasLoggedIn';
   HAS_SEEN_TUTORIAL = 'hasSeenTutorial';
