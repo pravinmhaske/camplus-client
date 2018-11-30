@@ -1,7 +1,7 @@
 import { Component, ViewEncapsulation } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
-import { LoginRegistrationService,UtilityService } from '../../providers/index';
+import { LoginRegistrationService, UtilityService } from '../../providers/index';
 import { UserOptions } from '../../interfaces/user-options';
 
 
@@ -21,7 +21,7 @@ export class SignupPage {
     // public userData: UserData,
     public registrationService: LoginRegistrationService,
     public util: UtilityService,
-  ) {}
+  ) { }
 
   onSignup(form: NgForm) {
     this.submitted = true;
@@ -29,22 +29,33 @@ export class SignupPage {
     if (form.valid) {
       this.util.showLoader("Logging  in...").then(() => {
         this.registrationService.registerUser(this.signup)
-        .subscribe(
-          data => {
-            this.registrationService.login(this.signup.username);
-           this.util.showToaster(data.message)
-            this.util.hideLoader();
-            this.router.navigateByUrl('/login');
-          },
-          error => {
-            console.log("Error", error);
-            this.util.hideLoader();
-            this.util.errorHandler(error);
-           }
-        )
-      }); 
-      // this.userData.signup(this.signup.username);
-      // this.router.navigateByUrl('/app/tabs/(schedule:schedule)');
+          .subscribe(
+            data => {
+
+              if (data.success) {
+                this.registrationService.login(this.signup.username);
+                if(data.rowsInserted){
+                  this.router.navigateByUrl('/login');
+                }
+
+              } else {
+                this.resetForm();
+              }
+              this.util.showToaster(data.message)
+              this.util.hideLoader();
+            },
+            error => {
+              this.resetForm();
+              console.log("Error", error);
+              this.util.hideLoader();
+              this.util.errorHandler(error);
+            }
+          )
+      });
     }
+  }
+  resetForm(){
+    this.signup={ username: '', password: '' };
+    this.submitted=false;
   }
 }

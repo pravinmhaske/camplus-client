@@ -41,16 +41,11 @@ export class LoginRegistrationService {
   }
 
   registerUser(registrationDataObj): Observable<any> {
-
-    if (this.data) {
-      return of(this.data);
-    } else {
-      return this.http
-        .post<any>(this.localhost + this.endpoints.registerUser, registrationDataObj)
-        .pipe(map(response => response, finalize(() => {
-          this._util.hideLoader();
-        })));
-    }
+    return this.http
+      .post<any>(this.localhost + this.endpoints.registerUser, registrationDataObj)
+      .pipe(map(response => response, finalize(() => {
+        this._util.hideLoader();
+      })));
   }
 
   login(username: string): Promise<any> {

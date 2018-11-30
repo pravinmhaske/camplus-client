@@ -1,7 +1,7 @@
 import { Component, ViewEncapsulation } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
-import { LoginRegistrationService,UtilityService } from '../../providers/index';
+import { LoginRegistrationService, UtilityService } from '../../providers/index';
 import { UserOptions } from '../../interfaces/user-options';
 // import { LoadingController } from '@ionic/angular';
 // import { Storage } from '@ionic/storage';
@@ -28,21 +28,31 @@ export class LoginPage {
     if (form.valid) {
       this.util.showLoader("Logging  in...").then(() => {
         this.loginService.loginUser(this.login)
-        .subscribe(
-          data => {
-            this.loginService.login(this.login.username);
-           this.util.showToaster(data.message)
-            this.util.hideLoader();
-            this.router.navigateByUrl('/app/tabs/(schedule:schedule)');
-          },
-          error => {
-            console.log("Error", error);
-            this.util.hideLoader();
-            this.util.errorHandler(error);
-           }
-        )
-      }); 
+          .subscribe(
+            data => {
+              if (data.success) {
+                this.loginService.login(this.login.username);
+                this.router.navigateByUrl('/app/tabs/(schedule:schedule)');
+              } else {
+                this.resetForm();
+              }
+              this.util.showToaster(data.message)
+              this.util.hideLoader();
+            },
+            error => {
+              this.resetForm();
+              console.log("Error", error);
+              this.util.hideLoader();
+              this.util.errorHandler(error);
+            }
+          )
+      });
     }
+  }
+
+  resetForm() {
+    this.login = { username: '', password: '' };
+    this.submitted = false;
   }
 
   onSignup() {
