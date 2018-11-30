@@ -40,6 +40,19 @@ export class LoginRegistrationService {
     }
   }
 
+  registerUser(registrationDataObj): Observable<any> {
+
+    if (this.data) {
+      return of(this.data);
+    } else {
+      return this.http
+        .post<any>(this.localhost + this.endpoints.registerUser, registrationDataObj)
+        .pipe(map(response => response, finalize(() => {
+          this._util.hideLoader();
+        })));
+    }
+  }
+
   login(username: string): Promise<any> {
     return this.storage.set(this.HAS_LOGGED_IN, true).then(() => {
       this.setUsername(username);

@@ -1,10 +1,10 @@
 import { Component, ViewEncapsulation } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
-import { UserData,LoginRegistrationService,UtilityService } from '../../providers/index';
+import { LoginRegistrationService,UtilityService } from '../../providers/index';
 import { UserOptions } from '../../interfaces/user-options';
-import { LoadingController } from '@ionic/angular';
-import { Storage } from '@ionic/storage';
+// import { LoadingController } from '@ionic/angular';
+// import { Storage } from '@ionic/storage';
 
 @Component({
   selector: 'page-login',
@@ -18,10 +18,9 @@ export class LoginPage {
 
   constructor(
     public loginService: LoginRegistrationService,
-    public router: Router,
     public util: UtilityService,
-    public loadingController: LoadingController,
-    public storage: Storage
+    // public storage: Storage,
+    public router: Router,
   ) { }
 
   async onLogin(form: NgForm) {
