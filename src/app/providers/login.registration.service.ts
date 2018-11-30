@@ -1,11 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map } from 'rxjs/operators';
-import {AppConfig} from './../config/app.config';
-import { Observable,of } from "rxjs";
+import { AppConfig } from './../config/app.config';
+import { Observable, of } from "rxjs";
 import { finalize, tap } from 'rxjs/operators';
 import { UserData } from './user-data';
-import {UtilityService} from './utility.service'
+import { UtilityService } from './utility.service'
+import { Events } from '@ionic/angular';
+import { Storage } from '@ionic/storage';
 
 @Injectable({
   providedIn: 'root'
@@ -14,8 +16,13 @@ export class LoginRegistrationService {
   data: any;
   private localhost;
   private endpoints;
+  HAS_LOGGED_IN = 'hasLoggedIn';
 
-  constructor(public http: HttpClient, public user: UserData,private _util:UtilityService) {
+  constructor(public http: HttpClient,
+    public user: UserData,
+    private _util: UtilityService,
+    public events: Events,
+    public storage: Storage) {
     this.localhost = AppConfig.endpoints.localUrl
     this.endpoints = AppConfig.endpoints;
   }
@@ -27,11 +34,24 @@ export class LoginRegistrationService {
     } else {
       return this.http
         .post<any>(this.localhost + this.endpoints.loginUser, loginDataObj)
-        .pipe(map(response => response,finalize(() => {
+        .pipe(map(response => response, finalize(() => {
           this._util.hideLoader();
         })));
     }
   }
+
+  login(username: string): Promise<any> {
+    return this.storage.set(this.HAS_LOGGED_IN, true).then(() => {
+      this.setUsername(username);
+      return this.events.publish('user:login');
+    });
+
+  }
+
+  setUsername(username: string): Promise<any> {
+    return this.storage.set('username', username);
+  }
+
   load(): any {
     if (this.data) {
       return of(this.data);

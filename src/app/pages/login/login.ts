@@ -1,15 +1,10 @@
 import { Component, ViewEncapsulation } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
-
-import { UserData } from '../../providers/user-data';
-import { LoginRegistrationService } from '../../providers/login.registration.service';
-import { UtilityService } from '../../providers/utility.service';
-
+import { UserData,LoginRegistrationService,UtilityService } from '../../providers/index';
 import { UserOptions } from '../../interfaces/user-options';
 import { LoadingController } from '@ionic/angular';
-
-
+import { Storage } from '@ionic/storage';
 
 @Component({
   selector: 'page-login',
@@ -22,20 +17,21 @@ export class LoginPage {
   submitted = false;
 
   constructor(
-    public userData: LoginRegistrationService,
+    public loginService: LoginRegistrationService,
     public router: Router,
     public util: UtilityService,
     public loadingController: LoadingController,
+    public storage: Storage
   ) { }
 
   async onLogin(form: NgForm) {
     this.submitted = true;
     if (form.valid) {
       this.util.showLoader("Logging  in...").then(() => {
-        this.userData.loginUser(this.login)
-        // .finally(() => this.toggleLoading())
+        this.loginService.loginUser(this.login)
         .subscribe(
           data => {
+            this.loginService.login(this.login.username);
            this.util.showToaster(data.message)
             this.util.hideLoader();
             this.router.navigateByUrl('/app/tabs/(schedule:schedule)');
@@ -46,8 +42,7 @@ export class LoginPage {
             this.util.errorHandler(error);
            }
         )
-      });
-      // 
+      }); 
     }
   }
 
