@@ -1,12 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import {AppConfig} from './../config/app.config';
-// import {IAppConfig} from './../config/iapp.config';
-import { Observable } from "rxjs";
-
+import { Observable,of } from "rxjs";
+import { finalize, tap } from 'rxjs/operators';
 import { UserData } from './user-data';
+import {UtilityService} from './utility.service'
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +15,7 @@ export class LoginRegistrationService {
   private localhost;
   private endpoints;
 
-  constructor(public http: HttpClient, public user: UserData) {
+  constructor(public http: HttpClient, public user: UserData,private _util:UtilityService) {
     this.localhost = AppConfig.endpoints.localUrl
     this.endpoints = AppConfig.endpoints;
   }
@@ -28,7 +27,9 @@ export class LoginRegistrationService {
     } else {
       return this.http
         .post<any>(this.localhost + this.endpoints.loginUser, loginDataObj)
-        .pipe(map(response => response));
+        .pipe(map(response => response,finalize(() => {
+          this._util.hideLoader();
+        })));
     }
   }
   load(): any {

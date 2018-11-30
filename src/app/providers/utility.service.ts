@@ -36,6 +36,10 @@ export class UtilityService {
   this.loading.dismiss();
 }
 
+errorHandler(error){
+  this.showToaster("Unexpected error occured.Please try again later.\n Error Details:"+error.message);
+}
+
   // async submit() {
   //     const toast = await this.toastCtrl.create({
   //       message: 'Your support request has been sent.',

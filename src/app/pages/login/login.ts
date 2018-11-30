@@ -32,18 +32,22 @@ export class LoginPage {
     this.submitted = true;
     if (form.valid) {
       this.util.showLoader("Logging  in...").then(() => {
-        this.userData.loginUser(this.login).subscribe(
+        this.userData.loginUser(this.login)
+        // .finally(() => this.toggleLoading())
+        .subscribe(
           data => {
-            console.log("POST Request is successful ", data);
+           this.util.showToaster(data.message)
             this.util.hideLoader();
+            this.router.navigateByUrl('/app/tabs/(schedule:schedule)');
           },
           error => {
             console.log("Error", error);
             this.util.hideLoader();
-          }
-        );
+            this.util.errorHandler(error);
+           }
+        )
       });
-      // this.router.navigateByUrl('/app/tabs/(schedule:schedule)');
+      // 
     }
   }
 
